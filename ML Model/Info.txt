@@ -1,0 +1,10 @@
+Training model:
+1.Go into bird python environment
+2.Open up jupyter nb of choice
+3.Train then save to .h5 file
+
+Converting to tflite
+1.Go into tflite python environment
+2.Open up tftesting nb
+3.Run code to save as tflite file
+
