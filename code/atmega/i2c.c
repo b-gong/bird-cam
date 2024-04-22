@@ -54,7 +54,7 @@ void rtc_init2(void)
   i2c_stop();
 }
 
-void rtc_setTime(unsigned char h, unsigned char m, unsigned char s)
+void rtc_setTime(char s, char m, char h, char wd, char d, char mo, char y)
 {
   i2c_start();
   i2c_write(0xD0);
@@ -62,6 +62,10 @@ void rtc_setTime(unsigned char h, unsigned char m, unsigned char s)
   i2c_write(s);
   i2c_write(m);
   i2c_write(h);
+  i2c_write(wd);
+  i2c_write(d);
+  i2c_write(mo);
+  i2c_write(y);
   i2c_stop();
 }
 

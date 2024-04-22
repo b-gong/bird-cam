@@ -17,7 +17,7 @@ int main() {
   while(1) {
     rtc_gettime(&i, &j, &k);
 
-    if (k == 0) //spin every minute
+    if (k%10 == 0) //spin every 10 secs
     {
       rotate(degree);
     }

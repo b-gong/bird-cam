@@ -8,11 +8,11 @@ int main()
 {
   motor_init();
 
-  int degree = 180;
-
   while(1) {
-    rotate(degree);
-    _delay_ms(5000);
+    rotate(90);
+    _delay_ms(100);
+    rotate(-90); // negative is not working idk why
+    _delay_ms(100);
   }
   return 0;
 }
