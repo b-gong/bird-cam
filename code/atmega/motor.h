@@ -5,18 +5,12 @@
 //  Created by Chur Tam on 4/22/24.
 //
 
-#include <stdio.h>
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-#include "i2c.h"
+#ifndef MOTOR_H
+#define MOTOR_H
 
-#ifndef motor_h
-#define motor_h
+#define DELAY_MS 10
 
+void rotate(int degrees);
+void motor_init();
 
 #endif /* motor_h */
-
-void motorSpinCW();
-void rotate(int degrees, int delay);
-int main();
