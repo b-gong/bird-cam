@@ -10,76 +10,71 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
-#ifndef i2c_h
-#define i2c_h
-
-
-#endif /* i2c_h */
+#include "i2c.h"
 
 void i2c_init(void)
 {
-    TWSR = 0x00;
-    TWBR = 0x48; //set i2c clock to be 100khz crystal freq = 16Mhz
-    TWCR = 0x04;
+  TWSR = 0x00;
+  TWBR = 0x48; //set i2c clock to be 100khz crystal freq = 16Mhz
+  TWCR = 0x04;
 }
 
 void i2c_start(void)
 {
-    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
-    while ((TWCR & (1 << TWINT)) == 0);
+  TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
+  while ((TWCR & (1 << TWINT)) == 0);
 }
 
 void i2c_write(unsigned char data)
 {
-    TWDR = data;
-    TWCR = (1 << TWINT) | (1 << TWEN);
-    while ((TWCR & (1 << TWINT)) == 0);
+  TWDR = data;
+  TWCR = (1 << TWINT) | (1 << TWEN);
+  while ((TWCR & (1 << TWINT)) == 0);
 }
 
 unsigned char i2c_read(unsigned char ackVal)
 {
-    TWCR = (1 << TWINT) | (1 << TWEN) | (ackVal << TWEA);
-    while ((TWCR & (1 << TWINT)) == 0);
-    return TWDR;
+  TWCR = (1 << TWINT) | (1 << TWEN) | (ackVal << TWEA);
+  while ((TWCR & (1 << TWINT)) == 0);
+  return TWDR;
 }
 
 void i2c_stop(){
-    TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
-    for (int x = 0; x < 100; x++); //wait for some time
+  TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
+  for (int x = 0; x < 100; x++); //wait for some time
 }
 
 void rtc_init2(void)
 {
-    i2c_init();
-    i2c_start();
-    i2c_write(0xD0);
-    i2c_write(0x07);
-    i2c_write(0x00);
-    i2c_stop();
+  i2c_init();
+  i2c_start();
+  i2c_write(0xD0);
+  i2c_write(0x07);
+  i2c_write(0x00);
+  i2c_stop();
 }
 
 void rtc_setTime(unsigned char h, unsigned char m, unsigned char s)
 {
-    i2c_start();
-    i2c_write(0xD0);
-    i2c_write(0x00);
-    i2c_write(s);
-    i2c_write(m);
-    i2c_write(h);
-    i2c_stop();
+  i2c_start();
+  i2c_write(0xD0);
+  i2c_write(0x00);
+  i2c_write(s);
+  i2c_write(m);
+  i2c_write(h);
+  i2c_stop();
 }
 
 void rtc_gettime(unsigned char *h, unsigned char *m, unsigned char *s)
 {
-    i2c_start();
-    i2c_write(0xD0);
-    i2c_write(0x00);
-    i2c_stop();
-    
-    i2c_start();
-    i2c_write(0xD1);
-    *s = i2c_read(1);
-    *m = i2c_read(1);
-    *h = i2c_read(0);
+  i2c_start();
+  i2c_write(0xD0);
+  i2c_write(0x00);
+  i2c_stop();
+
+  i2c_start();
+  i2c_write(0xD1);
+  *s = i2c_read(1);
+  *m = i2c_read(1);
+  *h = i2c_read(0);
 }
