@@ -6,7 +6,6 @@
 #include "motor.h"
 #include "i2c.h"
 
-#define NIGHT(t) (t > 19 || t < 7)
 #define NUM_REFILL 2
 #define PIC_CD 65535 // 9.1 sec @ 7.3728 MHz / 1024
 
@@ -31,7 +30,7 @@ int main() {
   // esp32 reset pin init
   DDRD |= 1 << PD4;
   PORTD |= 1 << PD4;
-  _delay_ms(50);
+  _delay_ms(100);
   PORTD &= ~(1 << PD4);
   _delay_ms(100);
   PORTD |= 1 << PD4;
@@ -52,9 +51,6 @@ int main() {
 
   // Nightlight init
   DDRB |= 1 << DDB1;
-
-  // Already refilled flag
-  uint8_t refilled = 0;
 
   // Init delay to make sure everything works right
   _delay_ms(500);
@@ -83,27 +79,13 @@ int main() {
       pic_cd_flag = 1;
       TCNT1 = 0; // reset timer counter
       TCCR1B |= (1 << CS12 | 1 << CS10); // Set prescalar; start timer
-    }
 
-
-    // check nighttime
-    if(NIGHT(rtc.hour))
+      // Show off
       PORTB |= 1 << PB1;
-    else
+      dispenseFood();
       PORTB &= ~(1 << PB1);
 
-    // check fed
-    uint8_t isRefillHour = 0;
-    for(i = 0; i < NUM_REFILL; i++) {
-      if(rtc.hour == refill[i]) {
-        isRefillHour = 1;
-        if(!refilled) {
-          dispenseFood();
-          refilled = 1;
-        }
-      }
     }
-    if(!isRefillHour) refilled = 0;
 
     _delay_ms(1000);
   }

@@ -5,10 +5,10 @@
 int main() {
   serial_init(MYUBRR);
 
-  uint8_t output[7] = {1, 2, 3, 4, 5, 6, 0};
+  char output[7] = {1, 2, 3, 4, 5, 6, 0};
 
   while(1) {
-    serial_bufferout(output);
+    serial_stringout(output);
 
     _delay_ms(1000);
   }

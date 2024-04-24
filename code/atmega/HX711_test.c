@@ -1,41 +1,38 @@
-#include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
-#include "HX711.h"
+#include <avr/interrupt.h>
+#include "HX711_light.h"
 
-int main(void)
-{
-  DDRC |= 1 << DDC0;          // Set PORTC bit 0 for output
+int main() {
+  // indicator led init
+  DDRC |= 1 << DDC0;
 
-  // Init HX711
-  HX711_init(128);
-  HX711_set_scale(1.f/*242300.88*/);
-  HX711_set_gain(128);
-  HX711_tare(10);
-  double tare_point_128 = HX711_get_offset();
-  double calibration_128 = 222138.f;//220235.f;
+  // HX711 init
+  HX711_init();
+  int32_t tare = readData();
+  int32_t data = 0;
+
+  // Init delay to make sure everything works right
   _delay_ms(500);
 
-  double current_weight_128, previous_weight_128;
+  /* Main loop
+    * Weight sensor trigger (less or equal to interrupt?) -> check rtc -> send UART tx
+    * rtc reaches scheduled time -> trigger motors
+    * rtc reaches night time -> turn on nightlight
+    * rtc reaches morning -> turn off nightlight
+  */
+  int i;
+  while(1) {
+    // poll load cell
+    data = readData();
 
-  current_weight_128 = HX711_read_average(10) - tare_point_128;
-  current_weight_128 = current_weight_128/calibration_128;
-  previous_weight_128 = current_weight_128;
-
-  while(1)
-  {   
-    current_weight_128 = HX711_read_average(10) - tare_point_128;
-    current_weight_128 = current_weight_128/calibration_128;
-
-    if(current_weight_128 - previous_weight_128 > 100) {
-      while (1) {
-        PORTC |= 1 << PC0;      // Set PC0 to a 1
-        _delay_ms(200);
-        PORTC &= ~(1 << PC0);   // Set PC0 to a 0
-      }
-
+    // if weight triggered, check rtc and send uart msg
+    if(data - tare > 100000) {
+      PORTC |= 1 << PC0;      // Set PC0 to a 1
+    } else {
+      PORTC &= ~(1 << PC0);
     }
 
-    previous_weight_128 = current_weight_128;
+    _delay_ms(100);
   }
 }

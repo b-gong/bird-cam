@@ -19,7 +19,7 @@ void serial_tx(uint8_t ch)
     UDR0 = ch;
 }
 
-void serial_bufferout(uint8_t *s)
+void serial_stringout(uint8_t *s)
 {
     int i = 0;
     while(i < 7) {

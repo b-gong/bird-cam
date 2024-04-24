@@ -11,7 +11,7 @@ int main()
   while(1) {
     rotate(90);
     _delay_ms(100);
-    rotate(-90); // negative is not working idk why
+    rotate(-90);
     _delay_ms(100);
   }
   return 0;

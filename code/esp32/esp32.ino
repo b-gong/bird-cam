@@ -93,15 +93,25 @@ void setup() {
     return;
   }
 
+  // Init led
+  // pinMode(2, OUTPUT);
+
   Serial.println("Wait 5");
   delay(5000);
+}
 
+void loop() {
   Serial.println("Wait for UART");
-  while(Serial.available() < 7) {delay(100);}
+  while (Serial.available() < 7) { delay(100); }
 
+  Serial.println("Got the msg!");
+
+  // digitalWrite(2, HIGH);
+
+  // sec, min, hr, day, month, yr, 0
   char ts[7];
   Serial.readBytes(ts, 7);
-  if(ts[6] != 0) {
+  if (ts[6] != 0) {
     Serial.println("UART bad read");
     return;
   }
@@ -132,9 +142,8 @@ void setup() {
   esp_camera_fb_return(fb);
 
   // Turns off the ESP32-CAM white on-board LED (flash) connected to GPIO 4
-  pinMode(4, OUTPUT);
-  digitalWrite(4, LOW);
-}
+  // pinMode(4, OUTPUT);
+  // digitalWrite(4, LOW);
 
-void loop() {
+  // digitalWrite(2, LOW);
 }

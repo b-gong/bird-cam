@@ -1,6 +1,6 @@
 //
 //  i2c.h
-//  
+//
 //
 //  Created by Chur Tam on 4/22/24.
 //
@@ -25,14 +25,14 @@ void i2c_start(void)
   while ((TWCR & (1 << TWINT)) == 0);
 }
 
-void i2c_write(unsigned char data)
+void i2c_write(uint8_t data)
 {
   TWDR = data;
   TWCR = (1 << TWINT) | (1 << TWEN);
   while ((TWCR & (1 << TWINT)) == 0);
 }
 
-unsigned char i2c_read(unsigned char ackVal)
+uint8_t i2c_read(uint8_t ackVal)
 {
   TWCR = (1 << TWINT) | (1 << TWEN) | (ackVal << TWEA);
   while ((TWCR & (1 << TWINT)) == 0);
@@ -41,7 +41,8 @@ unsigned char i2c_read(unsigned char ackVal)
 
 void i2c_stop(){
   TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
-  for (int x = 0; x < 100; x++); //wait for some time
+  int x;
+  for (x = 0; x < 100; x++); //wait for some time
 }
 
 void rtc_init2(void)
@@ -54,22 +55,22 @@ void rtc_init2(void)
   i2c_stop();
 }
 
-void rtc_setTime(char s, char m, char h, char wd, char d, char mo, char y)
+void rtc_setTime(rtc_time *rtc)
 {
   i2c_start();
   i2c_write(0xD0);
   i2c_write(0x00);
-  i2c_write(s);
-  i2c_write(m);
-  i2c_write(h);
-  i2c_write(wd);
-  i2c_write(d);
-  i2c_write(mo);
-  i2c_write(y);
+  i2c_write(rtc->sec);
+  i2c_write(rtc->min);
+  i2c_write(rtc->hour);
+  i2c_write(rtc->weekDay);
+  i2c_write(rtc->day);
+  i2c_write(rtc->month);
+  i2c_write(rtc->year);
   i2c_stop();
 }
 
-void rtc_gettime(unsigned char *h, unsigned char *m, unsigned char *s)
+void rtc_gettime(rtc_time *rtc)
 {
   i2c_start();
   i2c_write(0xD0);
@@ -78,7 +79,12 @@ void rtc_gettime(unsigned char *h, unsigned char *m, unsigned char *s)
 
   i2c_start();
   i2c_write(0xD1);
-  *s = i2c_read(1);
-  *m = i2c_read(1);
-  *h = i2c_read(0);
+  rtc->sec = i2c_read(1);
+  rtc->min = i2c_read(1);
+  rtc->hour = i2c_read(1);
+  rtc->weekDay = i2c_read(1);
+  rtc->day = i2c_read(1);
+  rtc->month = i2c_read(1);
+  rtc->year = i2c_read(0);
+  i2c_stop();
 }
