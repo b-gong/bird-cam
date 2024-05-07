@@ -1,2 +1,0 @@
-GPIO 0 to VCC
-GPIO 1 to Pin 5 on rpi (one hope away from fan gnd)
