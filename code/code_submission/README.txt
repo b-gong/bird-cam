@@ -1,0 +1,3 @@
+The atmega folder includes the code flashed onto the ATMega328p. It includes 4 custom libraries and two "main" files. One is main.c, intended for actual usage of the product. The other is demo_no_rtc.c, which has all the functions trigger based off of load cell detection. This is for demonstration purposes, especially of functions that typically only run at certain times in the day.
+
+The esp32 folder contains just esp32.ino, an Arduino IDE code file for the ESP32-CAM.
